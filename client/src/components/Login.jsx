@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../utils/auth";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useLoginMutation } from "../services/api.config";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -10,15 +10,23 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [login] = useLoginMutation(); // Access login mutation from API
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (email === "user@example.com" && password === "password123") {
-      login();
+    try {
+      // Call login API
+      const response = await login({ email, password }).unwrap(); // Unwrap API response
+      console.log(response);
+
+      // Save token to localStorage or sessionStorage
+      localStorage.setItem("token", response.token); // Assuming response contains token
+
+      // Navigate to home page
       navigate("/home");
-    } else {
-      setError("Invalid email or password");
+    } catch (err) {
+      setError(err?.data?.msg || "Invalid email or password"); // Display error message
     }
   };
 

@@ -1,12 +1,20 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors"; // Import the CORS middleware
 import userRoutes from "./routes/user.route.js";
 import jobRoute from "./routes/job.route.js";
 
 dotenv.config();
 
 const app = express();
+
+// Enable CORS for http://localhost:5173
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
 
 app.use(express.json());
 
