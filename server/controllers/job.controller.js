@@ -8,8 +8,6 @@ export const createJob = async (req, res) => {
     location,
     category,
     overview,
-    responsibilities,
-    requirements,
     salary,
   } = req.body;
 
@@ -20,8 +18,6 @@ export const createJob = async (req, res) => {
       location,
       category,
       overview,
-      responsibilities: responsibilities.split(",").map((item) => item.trim()), // Convert comma-separated to array
-      requirements: requirements.split(",").map((item) => item.trim()), // Convert comma-separated to array
       salary,
     });
 
@@ -67,8 +63,6 @@ export const updateJob = async (req, res) => {
     location,
     category,
     overview,
-    responsibilities,
-    requirements,
     salary,
   } = req.body;
   const { id } = req.params;
@@ -82,10 +76,6 @@ export const updateJob = async (req, res) => {
     if (location) job.location = location;
     if (category) job.category = category;
     if (overview) job.overview = overview;
-    if (responsibilities)
-      job.responsibilities = responsibilities.split(",").map((item) => item.trim());
-    if (requirements)
-      job.requirements = requirements.split(",").map((item) => item.trim());
     if (salary) job.salary = salary;
 
     await job.save();

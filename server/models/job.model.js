@@ -27,14 +27,6 @@ const jobSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    responsibilities: {
-      type: [String], // Storing as an array of strings for easier management
-      required: true,
-    },
-    requirements: {
-      type: [String], // Storing as an array of strings for easier management
-      required: true,
-    },
     salary: {
       type: Number,
       required: true,

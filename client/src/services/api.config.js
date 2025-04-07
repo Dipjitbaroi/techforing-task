@@ -22,6 +22,30 @@ export const configApi = createApi({
         body: data,
       }),
     }),
+    getProfile: builder.query({
+      query: () => `/users/me`,
+    }),
+    createJob: builder.mutation({
+      query: (data) => ({
+        url: `/jobs/create`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    getAllJobs: builder.query({
+      query: () => `/jobs/all`,
+    }),
+    updateJob: builder.mutation({
+      query: ({ id, updateData }) => ({
+        url: `/jobs/update/${id}`,
+        method: "PUT",
+        body: updateData,
+      }),
+    }),
   }),
 });
 export const { useLoginMutation } = configApi;
+export const { useGetProfileQuery } = configApi;
+export const { useCreateJobMutation } = configApi;
+export const { useGetAllJobsQuery } = configApi;
+export const { useUpdateJobMutation } = configApi;

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useLoginMutation } from "../services/api.config";
+import { login as authLogin } from "../utils/auth";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -20,7 +21,7 @@ const Login = () => {
       const response = await login({ email, password }).unwrap(); // Unwrap API response
       // Save token to localStorage or sessionStorage
       localStorage.setItem("token", response.token); // Assuming response contains token
-
+      authLogin(response.token);
       // Navigate to home page
       navigate("/home");
       console.log("aise");

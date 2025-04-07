@@ -11,10 +11,14 @@ import {
 import { Menu as MenuIcon } from "@mui/icons-material";
 import { logout } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux"; // Import useSelector to access Redux state
 
 const Navbar = ({ toggleSidebar }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
+
+  // Get user information from Redux state
+  const user = useSelector((state) => state.auth.user); // Assuming "auth" slice contains user info
 
   // Handle menu open
   const handleMenuOpen = (event) => {
@@ -35,8 +39,6 @@ const Navbar = ({ toggleSidebar }) => {
   return (
     <nav className="bg-[#182F59] text-white px-6 py-4 flex justify-between items-center w-full h-fit">
       {/* Hamburger Menu for Small Screens */}
-
-      {/* Logo and Title */}
       <div className="flex items-center">
         <div className="flex">
           <div className="md:hidden">
@@ -56,7 +58,7 @@ const Navbar = ({ toggleSidebar }) => {
       {/* Profile Section */}
       <div>
         <IconButton onClick={handleMenuOpen}>
-          <Avatar alt="DIPJIT BAROI" src="/assets/profile-pic.png" />
+          <Avatar alt={user?.name} src={user?.profilePicture || "/assets/default-profile-pic.png"} />
         </IconButton>
         <Menu
           anchorEl={anchorEl}
@@ -70,10 +72,10 @@ const Navbar = ({ toggleSidebar }) => {
           <MenuItem disabled>
             <div className="flex flex-col">
               <Typography variant="subtitle1" fontWeight="bold">
-                DIPJIT BAROI
+                {user?.name || "Guest User"}
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                dipjitbaroiofficial@gmail.com
+                {user?.email || "No email available"}
               </Typography>
             </div>
           </MenuItem>
