@@ -1,38 +1,46 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import { Home as HomeIcon, Description, Menu, Work } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { Home as HomeIcon, Work, Description, Menu } from "@mui/icons-material";
 
-const Sidebar = () => {
-  const navigate = useNavigate(); // Initialize the navigate function
+const Sidebar = ({ isOpen }) => {
+  const navigate = useNavigate();
 
   return (
-    <aside className="bg-white text-[#182F59] shadow-xl w-16 flex flex-col items-center py-6">
-      {/* Home Button */}
-      <button
-        onClick={() => navigate("/home")} // Navigate to the Home page
-        className="mb-6 hover:text-blue-400"
-      >
-        <HomeIcon fontSize="large" />
-      </button>
+    <div
+      className={`bg-white text-[#182F59] shadow-xl w-64 min-h-full md:w-20 z-40 transition-transform duration-300 ${
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      } 
+      md:translate-x-0 ${isOpen ? "fixed top-22 left-0" : ""}`} // Absolute on mobile, relative on larger screens
+    >
+      {/* Sidebar Links */}
+      <div className="flex flex-col items-center h-full">
+        <button
+          onClick={() => navigate("/home")}
+          className="mb-6 hover:text-blue-400 flex flex-col items-center py-4"
+        >
+          <HomeIcon fontSize="large" />
+          <span className="text-sm">Home</span>
+        </button>
 
-      {/* Jobs Button */}
-      <button
-        onClick={() => navigate("/jobs")} // Navigate to the Jobs page
-        className="mb-6 hover:text-blue-400"
-      >
-        <Work fontSize="large" />
-      </button>
+        <button
+          onClick={() => navigate("/jobs")}
+          className="mb-6 hover:text-blue-400 flex flex-col items-center py-4"
+        >
+          <Work fontSize="large" />
+          <span className="text-sm">Jobs</span>
+        </button>
 
-      {/* Description Placeholder */}
-      <button className="mb-6 hover:text-blue-400">
-        <Description fontSize="large" />
-      </button>
+        <button className="mb-6 hover:text-blue-400 flex flex-col items-center py-4">
+          <Description fontSize="large" />
+          <span className="text-sm">Docs</span>
+        </button>
 
-      {/* Menu Placeholder */}
-      <button className="hover:text-blue-400">
-        <Menu fontSize="large" />
-      </button>
-    </aside>
+        <button className="hover:text-blue-400 flex flex-col items-center py-4">
+          <Menu fontSize="large" />
+          <span className="text-sm">More</span>
+        </button>
+      </div>
+    </div>
   );
 };
 

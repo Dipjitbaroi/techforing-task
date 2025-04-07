@@ -8,10 +8,11 @@ import {
   Divider,
   Typography,
 } from "@mui/material";
+import { Menu as MenuIcon } from "@mui/icons-material";
 import { logout } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
 
-const Navbar = () => {
+const Navbar = ({ toggleSidebar }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
 
@@ -30,18 +31,29 @@ const Navbar = () => {
     logout();
     navigate("/login");
   };
+
   return (
-    <nav className="bg-[#182F59] text-white px-6 py-4 flex justify-between items-center">
-      {/* Logo and Title Section */}
+    <nav className="bg-[#182F59] text-white px-6 py-4 flex justify-between items-center w-full h-fit">
+      {/* Hamburger Menu for Small Screens */}
+
+      {/* Logo and Title */}
       <div className="flex items-center">
-        <img src={logo} alt="TechForing Logo" className="h-10 w-10 mr-4" />
+        <div className="flex">
+          <div className="md:hidden">
+            <IconButton onClick={toggleSidebar}>
+              <MenuIcon style={{ color: "white" }} />
+            </IconButton>
+          </div>
+
+          <img src={logo} alt="TechForing Logo" className="h-10 w-10 mr-4" />
+        </div>
         <div className="flex flex-col">
           <h1 className="text-xl font-bold">TechForing</h1>
           <p className="text-xs">Shaping Tomorrows Cybersecurity</p>
         </div>
       </div>
 
-      {/* Profile and Dropdown Menu */}
+      {/* Profile Section */}
       <div>
         <IconButton onClick={handleMenuOpen}>
           <Avatar alt="DIPJIT BAROI" src="/assets/profile-pic.png" />

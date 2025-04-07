@@ -2,8 +2,6 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles"; // Import ThemeProvider
 import theme from "./theme"; // Import the custom theme
-import Navbar from "./components/Navbar";
-import Sidebar from "./components/Sidebar";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Home from "./components/Home";
@@ -11,6 +9,7 @@ import JobsPage from "./components/JobsPage";
 import PrivateRoute from "./utils/PrivateRoute";
 import PublicRoute from "./utils/PublicRoute";
 import { isAuthenticated } from "./utils/auth";
+import MainLayout from "./components/MainLayout"; // Import MainLayout
 
 const App = () => {
   return (
@@ -41,18 +40,14 @@ const App = () => {
             }
           />
 
-          {/* Protected routes */}
+          {/* Protected routes using MainLayout */}
           <Route
             path="/home"
             element={
               <PrivateRoute>
-                <Navbar /> {/* Navbar displays only on protected pages */}
-                <div className="flex">
-                  <Sidebar /> {/* Sidebar displays only on protected pages */}
-                  <div className="flex-1">
-                    <Home />
-                  </div>
-                </div>
+                <MainLayout>
+                  <Home />
+                </MainLayout>
               </PrivateRoute>
             }
           />
@@ -60,13 +55,9 @@ const App = () => {
             path="/jobs"
             element={
               <PrivateRoute>
-                <Navbar /> {/* Navbar displays only on protected pages */}
-                <div className="flex">
-                  <Sidebar /> {/* Sidebar displays only on protected pages */}
-                  <div className="flex-1">
-                    <JobsPage />
-                  </div>
-                </div>
+                <MainLayout>
+                  <JobsPage />
+                </MainLayout>
               </PrivateRoute>
             }
           />
