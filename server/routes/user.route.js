@@ -4,6 +4,7 @@ import {
   login,
   deleteUser,
   updateUser,
+  getLoggedInUser,
 } from "../controllers/user.controller.js";
 import { checkToken } from "../middlewares/checkToken.js";
 
@@ -16,5 +17,7 @@ router.post("/login", login);
 router.put("/update", checkToken, updateUser);
 
 router.delete("/delete/:id", checkToken, deleteUser);
+
+router.get("/me", checkToken, getLoggedInUser);
 
 export default router;

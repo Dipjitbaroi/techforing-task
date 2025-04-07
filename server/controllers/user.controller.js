@@ -95,3 +95,29 @@ export const updateUser = async (req, res) => {
     res.status(500).json({ msg: "Server error" });
   }
 };
+
+export const getLoggedInUser = async (req, res) => {
+  try {
+    // Extract the token from headers
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({ msg: "No token provided, authorization denied" });
+    }
+
+    // Verify the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Find the user by ID from the decoded token
+    const user = await User.findById(decoded.id).select("-password"); // Exclude the password field
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Server error" });
+  }
+};

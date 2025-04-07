@@ -18,13 +18,12 @@ const Login = () => {
     try {
       // Call login API
       const response = await login({ email, password }).unwrap(); // Unwrap API response
-      console.log(response);
-
       // Save token to localStorage or sessionStorage
       localStorage.setItem("token", response.token); // Assuming response contains token
 
       // Navigate to home page
       navigate("/home");
+      console.log("aise");
     } catch (err) {
       setError(err?.data?.msg || "Invalid email or password"); // Display error message
     }
