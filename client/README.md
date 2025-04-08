@@ -36,8 +36,9 @@ Make sure you have Node.js and npm (or yarn) installed on your system. You can d
 
 The frontend application uses environment variables for configuration. Create a `.env.local` file in the `client` directory and define the following:
 
-```env
-VITE_API_URL="<Your Backend API URL>"
+    ```env
+    VITE_API_URL="<Your Backend API URL>"
+    ```
 
 ### Running the Client Application
 
