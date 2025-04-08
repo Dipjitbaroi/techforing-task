@@ -49,6 +49,12 @@ export const configApi = createApi({
         body: updateData,
       }),
     }),
+    deleteJob: builder.mutation({
+      query: ({ id }) => ({
+        url: `/jobs/delete/${id}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 export const { useLoginMutation } = configApi;
@@ -57,3 +63,4 @@ export const { useGetProfileQuery } = configApi;
 export const { useCreateJobMutation } = configApi;
 export const { useGetAllJobsQuery } = configApi;
 export const { useUpdateJobMutation } = configApi;
+export const { useDeleteJobMutation } = configApi;

@@ -1,33 +1,42 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TextField, InputAdornment, IconButton } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material"; // Import Material-UI icons
+import { TextField, InputAdornment, IconButton, Button } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useRegisterMutation } from "../services/api.config";
 
 const Register = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
-  const [register] = useRegisterMutation(); // Access register mutation from API
+  const [register, { isLoading }] = useRegisterMutation();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setError(""); // Clear previous errors
+    setSuccess(""); // Clear previous success messages
 
     try {
-      // Call register API
-      const response = await register({ name, email, password }).unwrap(); // Unwrap API response
+      await register(formData).unwrap();
       setSuccess("Registration successful! Redirecting to login...");
-      
-      // Navigate to the login page after successful registration
       setTimeout(() => {
         navigate("/login");
-      }, 1500); // Delay for better user experience
+      }, 1500);
     } catch (err) {
-      // Handle API errors
       setError(err?.data?.msg || "Registration failed! Please try again.");
     }
   };
@@ -37,15 +46,18 @@ const Register = () => {
       <div className="bg-white shadow-md rounded-lg w-full max-w-md p-8">
         <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-        {success && <p className="text-green-500 text-center mb-4">{success}</p>}
+        {success && (
+          <p className="text-green-500 text-center mb-4">{success}</p>
+        )}
         <form onSubmit={handleRegister}>
           <div className="mb-4">
             <TextField
               label="Name"
               variant="outlined"
               fullWidth
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
               required
             />
           </div>
@@ -54,8 +66,9 @@ const Register = () => {
               label="Email"
               variant="outlined"
               fullWidth
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               required
             />
           </div>
@@ -65,14 +78,15 @@ const Register = () => {
               variant="outlined"
               type={showPassword ? "text" : "password"}
               fullWidth
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
               required
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={handleTogglePasswordVisibility}
                       edge="end"
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -82,20 +96,26 @@ const Register = () => {
               }}
             />
           </div>
-          <button
+          <Button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-300 mb-4"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className="mb-4"
+            disabled={isLoading}
           >
-            Register
-          </button>
+            {isLoading ? "Registering..." : "Register"}
+          </Button>
         </form>
 
-        <button
+        <Button
+          fullWidth
+          variant="outlined"
+          color="secondary"
           onClick={() => navigate("/login")}
-          className="w-full bg-gray-500 text-white py-2 rounded hover:bg-gray-600 transition duration-300"
         >
           Back to Login
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import {
   useCreateJobMutation,
+  useDeleteJobMutation,
   useGetAllJobsQuery,
   useUpdateJobMutation,
-} from "../services/api.config"; // Import the createJob mutation
+} from "../services/api.config";
 
 const JobsPage = () => {
-  const [jobs, setJobs] = useState([]); // Local state for job list (optional if fully API-driven)
   const [newJob, setNewJob] = useState({
     title: "",
     description: "",
@@ -17,14 +17,7 @@ const JobsPage = () => {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [editJobId, setEditJobId] = useState(null);
-  const [editJob, setEditJob] = useState({
-    title: "",
-    description: "",
-    location: "",
-    category: "",
-    overview: "",
-    salary: "",
-  });
+  const [deletingJobId, setDeletingJobId] = useState(null); // New state to track deleting job
 
   const categories = [
     "Digital Marketing",
@@ -36,42 +29,32 @@ const JobsPage = () => {
     "HR & Administration",
   ];
 
-  const { data: jobsData } = useGetAllJobsQuery(); // Fetch jobs from API
+  const {
+    data: jobsData,
+    isLoading: loadingJobs,
+    error: errorJobs,
+    refetch,
+  } = useGetAllJobsQuery();
 
-  // Hook for creating a new job
-  const [createJob, { isLoading, error }] = useCreateJobMutation();
+  const [createJob, { isLoading: creating, error: createError }] =
+    useCreateJobMutation();
   const [updateJob, { isLoading: updating, error: updateError }] =
     useUpdateJobMutation();
+  const [deleteJob, { error: deleteError }] = useDeleteJobMutation(); // Renamed isDeleting for clarity
 
-  // Handle Input Changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewJob({ ...newJob, [name]: value });
   };
 
-  // Add a New Job using API
   const handleAddJob = async (e) => {
     e.preventDefault();
-
-    // Validate inputs
-    if (
-      !newJob.title ||
-      !newJob.description ||
-      !newJob.location ||
-      !newJob.category ||
-      !newJob.overview ||
-      !newJob.salary
-    ) {
+    if (Object.values(newJob).some((value) => !value)) {
       alert("Please fill out all fields");
       return;
     }
-
     try {
-      // Make an API call to create a job
-      const response = await createJob(newJob).unwrap(); // Call mutation and unwrap response
-      // Optional: Update local state to reflect the newly created job
-      setJobs([...jobs, response]);
-      // Reset the form
+      await createJob(newJob).unwrap();
       setNewJob({
         title: "",
         description: "",
@@ -81,35 +64,25 @@ const JobsPage = () => {
         salary: "",
       });
       alert("Job created successfully!");
+      refetch();
     } catch (err) {
       console.error("Error creating job:", err);
+      alert(
+        `Error creating job: ${err?.data?.message || "Something went wrong"}`
+      );
     }
   };
 
-  // Edit a Job
   const handleEditJob = (job) => {
-    console.log(job);
     setIsEditing(true);
-    setEditJobId(job._id); // Set the selected job ID
-    setEditJob({
-      title: job.title,
-      description: job.description,
-      location: job.location,
-      category: job.category,
-      overview: job.overview,
-      salary: job.salary,
-    });
+    setEditJobId(job._id);
+    setNewJob({ ...job });
   };
 
   const handleUpdateJob = async (e) => {
     e.preventDefault();
-
     try {
-      const response = await updateJob({
-        id: editJobId, // Selected job ID
-        updateData: editJob, // The updated job data
-      }).unwrap();
-      console.log(response);
+      await updateJob({ id: editJobId, updateData: newJob }).unwrap();
       alert("Job updated successfully!");
       setIsEditing(false);
       setEditJobId(null);
@@ -121,14 +94,31 @@ const JobsPage = () => {
         overview: "",
         salary: "",
       });
+      refetch();
     } catch (err) {
       console.error("Error updating job:", err);
+      alert(
+        `Error updating job: ${err?.data?.message || "Something went wrong"}`
+      );
     }
   };
 
-  // Delete a Job
-  const handleDeleteJob = (jobId) => {
-    setJobs(jobs.filter((job) => job.id !== jobId));
+  const handleDeleteJob = async (jobId) => {
+    if (window.confirm("Are you sure you want to delete this job?")) {
+      setDeletingJobId(jobId); // Set the ID of the job being deleted
+      try {
+        await deleteJob({ id: jobId }).unwrap();
+        alert("Job deleted successfully!");
+        refetch();
+      } catch (err) {
+        console.error("Error deleting job:", err);
+        alert(
+          `Failed to delete job: ${err?.data?.message || "Please try again."}`
+        );
+      } finally {
+        setDeletingJobId(null); // Reset the deleting ID after the attempt
+      }
+    }
   };
 
   return (
@@ -137,8 +127,8 @@ const JobsPage = () => {
 
       {/* Job Form */}
       <form
-        className="mb-6"
         onSubmit={isEditing ? handleUpdateJob : handleAddJob}
+        className="mb-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <input
@@ -159,15 +149,17 @@ const JobsPage = () => {
             onChange={handleInputChange}
             required
           />
-          <input
-            type="text"
+          <select
             name="location"
-            placeholder="Location"
             className="p-2 border rounded"
             value={newJob.location}
             onChange={handleInputChange}
             required
-          />
+          >
+            <option value="">Select Location</option>
+            <option value="onsite">Onsite</option>
+            <option value="remote">Remote</option>
+          </select>
           <select
             name="category"
             className="p-2 border rounded"
@@ -201,18 +193,52 @@ const JobsPage = () => {
             required
           />
         </div>
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          {isLoading ? "Adding Job..." : isEditing ? "Update Job" : "Add Job"}
-        </button>
+        <div className="flex gap-4 mt-4">
+          <button
+            type="submit"
+            disabled={creating || updating}
+            className={`px-4 py-2 rounded ${
+              creating || updating
+                ? "bg-blue-300 cursor-not-allowed"
+                : "bg-blue-500 hover:bg-blue-600"
+            } text-white`}
+          >
+            {creating || updating
+              ? isEditing
+                ? "Updating Job..."
+                : "Adding Job..."
+              : isEditing
+              ? "Update Job"
+              : "Add Job"}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setNewJob({
+                title: "",
+                description: "",
+                location: "",
+                category: "",
+                overview: "",
+                salary: "",
+              });
+              setIsEditing(false);
+              setEditJobId(null);
+            }}
+            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+          >
+            Cancel
+          </button>
+        </div>
       </form>
 
-      {error && (
-        <p className="text-red-500">
-          Error: {error?.data?.message || "Something went wrong"}
+      {(createError || updateError || deleteError) && (
+        <p className="text-red-500 mb-4">
+          Error:{" "}
+          {createError?.data?.message ||
+            updateError?.data?.message ||
+            deleteError?.data?.message ||
+            "Something went wrong"}
         </p>
       )}
 
@@ -230,15 +256,28 @@ const JobsPage = () => {
           </tr>
         </thead>
         <tbody>
-          {jobsData?.length === 0 ? (
+          {loadingJobs ? (
             <tr>
-              <td colSpan="9" className="text-center py-4">
+              <td colSpan="7" className="text-center py-4">
+                Loading jobs...
+              </td>
+            </tr>
+          ) : errorJobs ? (
+            <tr>
+              <td colSpan="7" className="text-center py-4 text-red-500">
+                Error loading jobs:{" "}
+                {errorJobs.message || "Something went wrong"}
+              </td>
+            </tr>
+          ) : jobsData?.length === 0 ? (
+            <tr>
+              <td colSpan="7" className="text-center py-4">
                 No jobs found. Add a new job above!
               </td>
             </tr>
           ) : (
             jobsData?.map((job) => (
-              <tr key={job.id} className="text-center">
+              <tr key={job._id} className="text-center">
                 <td className="border border-gray-300 px-4 py-2">
                   {job?.title}
                 </td>
@@ -265,10 +304,15 @@ const JobsPage = () => {
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDeleteJob(job.id)}
-                    className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                    onClick={() => handleDeleteJob(job._id)}
+                    disabled={deletingJobId === job._id} // Disable only the current deleting button
+                    className={`px-2 py-1 rounded text-white ${
+                      deletingJobId === job._id
+                        ? "bg-red-300 cursor-not-allowed"
+                        : "bg-red-500 hover:bg-red-600"
+                    }`}
                   >
-                    Delete
+                    {deletingJobId === job._id ? "Deleting..." : "Delete"}
                   </button>
                 </td>
               </tr>

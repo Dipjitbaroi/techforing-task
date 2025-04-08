@@ -7,7 +7,6 @@ import {
   Button,
   Box,
 } from "@mui/material"; // Import Material-UI components
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore"; // Import ExpandMoreIcon
 import { LocationCity, Work, WorkOutline } from "@mui/icons-material"; // Import icons for buttons
 import JobDetailsModal from "./JobDetailsModal";
 import { useGetAllJobsQuery } from "../services/api.config"; // Import the query hook
@@ -38,7 +37,9 @@ const Home = () => {
   const filteredJobs = () => {
     if (!jobsData) return [];
     if (selectedFilter === "ALL JOBS") return jobsData;
-    return jobsData.filter((job) => job.type === selectedFilter); // Assuming 'type' holds filter info like "ONSITE" or "REMOTE"
+    return jobsData.filter(
+      (job) => job.location.toUpperCase() === selectedFilter
+    );
   };
 
   const categorizedJobs = () => {
@@ -168,7 +169,9 @@ const Home = () => {
                           : "none",
                     }}
                   >
-                    <Typography style={{ color: "#333" }}>{job.title}</Typography>
+                    <Typography style={{ color: "#333" }}>
+                      {job.title}
+                    </Typography>
                     <Button
                       variant="contained"
                       sx={{

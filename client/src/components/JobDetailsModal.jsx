@@ -15,26 +15,18 @@ const style = {
   borderRadius: "8px",
 };
 
-// Default job details as an array
+// Default job details
 const defaultJobDetails = {
   title: "Default Job Title",
   overview: "This is a default job overview.",
-  responsibilities: [
-    "Default responsibility 1",
-    "Default responsibility 2",
-    "Default responsibility 3",
-  ],
-  requirements: [
-    "Default requirement 1",
-    "Default requirement 2",
-    "Default requirement 3",
-  ],
+  description:
+    "This is a default job description providing more details about the role.",
   location: "Default Location",
   salary: "Default Salary",
 };
 
 const JobDetailsModal = ({ open, handleClose, jobDetails }) => {
-  const details = jobDetails || defaultJobDetails; // Fallback to default data if `jobDetails` is undefined
+  const details = jobDetails || defaultJobDetails; // Fallback to default data
 
   return (
     <Modal
@@ -69,20 +61,7 @@ const JobDetailsModal = ({ open, handleClose, jobDetails }) => {
           <strong>Overview:</strong> {details?.overview}
         </Typography>
         <Typography sx={{ mt: 2 }}>
-          <strong>Responsibilities:</strong>
-          <ul>
-            {details?.responsibilities?.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
-        </Typography>
-        <Typography sx={{ mt: 2 }}>
-          <strong>Requirements:</strong>
-          <ul>
-            {details?.requirements?.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
+          <strong>Description:</strong> {details?.description}
         </Typography>
         <Typography sx={{ mt: 2 }}>
           <strong>Location:</strong> {details?.location}
