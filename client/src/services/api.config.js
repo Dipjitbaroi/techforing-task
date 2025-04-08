@@ -22,6 +22,13 @@ export const configApi = createApi({
         body: data,
       }),
     }),
+    register: builder.mutation({
+      query: (data) => ({
+        url: `/users/register`,
+        method: "POST",
+        body: data,
+      }),
+    }),
     getProfile: builder.query({
       query: () => `/users/me`,
     }),
@@ -45,6 +52,7 @@ export const configApi = createApi({
   }),
 });
 export const { useLoginMutation } = configApi;
+export const { useRegisterMutation } = configApi;
 export const { useGetProfileQuery } = configApi;
 export const { useCreateJobMutation } = configApi;
 export const { useGetAllJobsQuery } = configApi;

@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
-import { logout } from "../utils/auth";
+import { logout } from "../utils/auth"; // Import the logout function
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux"; // Import useSelector to access Redux state
 
@@ -18,7 +18,7 @@ const Navbar = ({ toggleSidebar }) => {
   const navigate = useNavigate();
 
   // Get user information from Redux state
-  const user = useSelector((state) => state.auth.user); // Assuming "auth" slice contains user info
+  const user = useSelector((state) => state.auth.user);
 
   // Handle menu open
   const handleMenuOpen = (event) => {
@@ -30,10 +30,11 @@ const Navbar = ({ toggleSidebar }) => {
     setAnchorEl(null);
   };
 
+  // Handle logout
   const handleLogout = () => {
     handleMenuClose();
-    logout();
-    navigate("/login");
+    logout(); // Call the logout function
+    navigate("/login"); // Navigate to the login page
   };
 
   return (
@@ -46,19 +47,21 @@ const Navbar = ({ toggleSidebar }) => {
               <MenuIcon style={{ color: "white" }} />
             </IconButton>
           </div>
-
           <img src={logo} alt="TechForing Logo" className="h-10 w-10 mr-4" />
         </div>
         <div className="flex flex-col">
           <h1 className="text-xl font-bold">TechForing</h1>
-          <p className="text-xs">Shaping Tomorrows Cybersecurity</p>
+          <p className="text-xs">Shaping Tomorrow's Cybersecurity</p>
         </div>
       </div>
 
       {/* Profile Section */}
       <div>
         <IconButton onClick={handleMenuOpen}>
-          <Avatar alt={user?.name} src={user?.profilePicture || "/assets/default-profile-pic.png"} />
+          <Avatar
+            alt={user?.name || "Guest User"}
+            src={user?.profilePicture || "/assets/default-profile-pic.png"}
+          />
         </IconButton>
         <Menu
           anchorEl={anchorEl}
