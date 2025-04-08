@@ -2,14 +2,7 @@ import Job from "../models/job.model.js";
 
 // Create a new job
 export const createJob = async (req, res) => {
-  const {
-    title,
-    description,
-    location,
-    category,
-    overview,
-    salary,
-  } = req.body;
+  const { title, description, location, category, overview, salary } = req.body;
 
   try {
     const job = new Job({
@@ -19,7 +12,9 @@ export const createJob = async (req, res) => {
       category,
       overview,
       salary,
+      createdBy: req.user.id,
     });
+    console.log(job);
 
     await job.save();
     res.json({
@@ -34,7 +29,13 @@ export const createJob = async (req, res) => {
 // Get all jobs
 export const getAllJobs = async (req, res) => {
   try {
-    const jobs = await Job.find();
+    // Extract the user ID from the request (added by checkToken middleware)
+    const userId = req.user.id;
+    console.log(req.user);
+
+    // Find jobs created by the logged-in user
+    const jobs = await Job.find({ createdBy: userId });
+
     res.json(jobs);
   } catch (err) {
     res.status(500).json({ msg: "Server error" });
@@ -57,14 +58,7 @@ export const getJobById = async (req, res) => {
 
 // Update a job
 export const updateJob = async (req, res) => {
-  const {
-    title,
-    description,
-    location,
-    category,
-    overview,
-    salary,
-  } = req.body;
+  const { title, description, location, category, overview, salary } = req.body;
   const { id } = req.params;
 
   try {
