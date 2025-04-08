@@ -1,12 +1,8 @@
-# TechForing Task Monorepo
-
-This repository contains the codebase for the TechForing task, organized as a monorepo with separate directories for the server and client applications. This README focuses on the frontend client application.
-
-**Cloud URL (Frontend):** [https://techforing-task-mu.vercel.app](https://techforing-task-mu.vercel.app)
-
 ## Client (Frontend)
 
 The frontend application is located in the `client` directory and is built using React, Vite, Material-UI, Redux Toolkit, and Tailwind CSS.
+
+**Cloud URL (Frontend):** [https://techforing-task-mu.vercel.app](https://techforing-task-mu.vercel.app)
 
 ### Getting Started (Client)
 
