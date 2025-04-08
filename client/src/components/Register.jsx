@@ -96,26 +96,29 @@ const Register = () => {
               }}
             />
           </div>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className="mb-4"
-            disabled={isLoading}
-          >
-            {isLoading ? "Registering..." : "Register"}
-          </Button>
+          <div className="flex flex-col gap-4">
+            <button
+              type="submit"
+              className={`w-full px-4 py-2 font-bold text-white rounded 
+                ${
+                  isLoading
+                    ? "bg-blue-400 cursor-not-allowed"
+                    : "bg-blue-500 hover:bg-blue-600"
+                } 
+              `}
+              disabled={isLoading}
+            >
+              {isLoading ? "Registering..." : "Register"}
+            </button>
+            <button
+              type="button"
+              className="w-full px-4 py-2 font-bold text-blue-500 border border-blue-500 rounded hover:bg-blue-100"
+              onClick={() => navigate("/login")}
+            >
+              Back to Login
+            </button>
+          </div>
         </form>
-
-        <Button
-          fullWidth
-          variant="outlined"
-          color="secondary"
-          onClick={() => navigate("/login")}
-        >
-          Back to Login
-        </Button>
       </div>
     </div>
   );
