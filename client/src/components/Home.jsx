@@ -57,6 +57,7 @@ const Home = () => {
   if (error) return <p>Error fetching jobs: {error.message}</p>;
 
   const categories = categorizedJobs();
+  const hasJobs = Object.keys(categories).length > 0;
 
   return (
     <div>
@@ -116,83 +117,89 @@ const Home = () => {
         </div>
 
         <div className="p-6 max-w-7xl mx-auto">
-          {Object.entries(categories).map(([category, jobs], index) => (
-            <Accordion
-              key={index}
-              expanded={expanded[category] || false}
-              onChange={() => toggleExpand(category)}
-              className="mb-4"
-              sx={{
-                backgroundColor: "#f5f5f5",
-                border: "2px solid #0003",
-                borderRadius: "8px",
-              }}
-            >
-              <AccordionSummary
-                expandIcon={
-                  expanded[category] ? (
-                    <Typography
-                      style={{ fontSize: "1.5rem", fontWeight: "bold" }}
-                    >
-                      -
-                    </Typography>
-                  ) : (
-                    <Typography
-                      style={{ fontSize: "1.5rem", fontWeight: "bold" }}
-                    >
-                      +
-                    </Typography>
-                  )
-                }
+          {!hasJobs ? (
+            <Typography variant="h6" color="textSecondary" align="center">
+              No jobs available right now. Please check back later.
+            </Typography>
+          ) : (
+            Object.entries(categories).map(([category, jobs], index) => (
+              <Accordion
+                key={index}
+                expanded={expanded[category] || false}
+                onChange={() => toggleExpand(category)}
+                className="mb-4"
+                sx={{
+                  backgroundColor: "#f5f5f5",
+                  border: "2px solid #0003",
+                  borderRadius: "8px",
+                }}
               >
-                <Typography
-                  variant="h6"
-                  style={{ fontWeight: "bold", color: "#00000099" }}
+                <AccordionSummary
+                  expandIcon={
+                    expanded[category] ? (
+                      <Typography
+                        style={{ fontSize: "1.5rem", fontWeight: "bold" }}
+                      >
+                        -
+                      </Typography>
+                    ) : (
+                      <Typography
+                        style={{ fontSize: "1.5rem", fontWeight: "bold" }}
+                      >
+                        +
+                      </Typography>
+                    )
+                  }
                 >
-                  {category}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                {jobs.map((job, jobIndex) => (
-                  <Box
-                    key={jobIndex}
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    py={1}
-                    px={2}
-                    sx={{
-                      backgroundColor: "white",
-                      borderBottom:
-                        jobIndex !== jobs.length - 1
-                          ? "1px solid #E0E0E0"
-                          : "none",
-                    }}
+                  <Typography
+                    variant="h6"
+                    style={{ fontWeight: "bold", color: "#00000099" }}
                   >
-                    <Typography style={{ color: "#333" }}>
-                      {job.title}
-                    </Typography>
-                    <Button
-                      variant="contained"
+                    {category}
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  {jobs.map((job, jobIndex) => (
+                    <Box
+                      key={jobIndex}
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                      py={1}
+                      px={2}
                       sx={{
-                        backgroundColor: "#FFFFFF",
-                        "&:hover": {
-                          backgroundColor: "#182F59",
-                          color: "#FFFFFF",
-                        },
-                        color: "#000000",
-                        borderRadius: "5px",
-                        padding: "5px 10px",
+                        backgroundColor: "white",
+                        borderBottom:
+                          jobIndex !== jobs.length - 1
+                            ? "1px solid #E0E0E0"
+                            : "none",
                       }}
-                      onClick={() => handleOpen(job)}
                     >
-                      APPLY NOW
-                    </Button>
-                  </Box>
-                ))}
-              </AccordionDetails>
-            </Accordion>
-          ))}
+                      <Typography style={{ color: "#333" }}>
+                        {job.title}
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          backgroundColor: "#FFFFFF",
+                          "&:hover": {
+                            backgroundColor: "#182F59",
+                            color: "#FFFFFF",
+                          },
+                          color: "#000000",
+                          borderRadius: "5px",
+                          padding: "5px 10px",
+                        }}
+                        onClick={() => handleOpen(job)}
+                      >
+                        APPLY NOW
+                      </Button>
+                    </Box>
+                  ))}
+                </AccordionDetails>
+              </Accordion>
+            ))
+          )}
 
           {/* Job Details Modal */}
           {selectedJob && (

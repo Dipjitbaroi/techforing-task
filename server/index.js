@@ -9,10 +9,10 @@ dotenv.config();
 
 const app = express();
 
-// Enable CORS for http://localhost:5173
+// Enable CORS for multiple origins
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "https://techforing-task-mu.vercel.app"],
   })
 );
 
