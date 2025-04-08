@@ -32,6 +32,13 @@ Make sure you have Node.js and npm (or yarn) installed on your system. You can d
     yarn install
     ```
 
+### Environment Variables (Client)
+
+The frontend application uses environment variables for configuration. Create a `.env.local` file in the `client` directory and define the following:
+
+```env
+VITE_API_URL="<Your Backend API URL>"
+
 ### Running the Client Application
 
 #### Development Mode (Client)
